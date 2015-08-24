@@ -1,6 +1,10 @@
 A fair queue based on Deficit Round Robin
 =========================================
 
+[![Build Status](https://travis-ci.org/mdlavin/drr-fair-queue.svg)](https://travis-ci.org/mdlavin/drr-fair-queue)
+[![NPM version](https://badge.fury.io/js/drr-fair-queue.svg)](http://badge.fury.io/js/drr-fair-queue)
+[![Dependency Status](https://david-dm.org/mdlavin/drr-fair-queue.svg)](https://david-dm.org/mdlavin/drr-fair-queue)
+
 With this module, you can queue work from multiple incoming sources
 and pull work for the queue in a fair order. One source cannot cause starvation
 of the other sources. This module is an implemenation of the work in
