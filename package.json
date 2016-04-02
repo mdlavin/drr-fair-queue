@@ -4,7 +4,7 @@
   "description": "An fair queue based using Deficit Round-Robin",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --harmony_proxies"
+    "test": "if node --version | grep -q '^v0.10.'; then mocha --harmony_proxies --harmony_collections; else mocha --harmony_proxies; fi"
   },
   "author": "Matt Lavin <matt.lavin@gmail.com>",
   "repository": {
