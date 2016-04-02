@@ -42,3 +42,39 @@ queue.pop();  // Will pop item 3 from source 2
 queue.pop();  // Will pop item 2 from source 1
 ```
 
+Reacting to queued work
+-----------------------
+To know when work is ready to be processed, you can register a hook as an option
+to the constructor. Here is an example program that watches for work and
+processes when it's available:
+
+```js
+var FairQueue = require('drr-fair-queue');
+
+var freeWorkers = 1;
+function processWork() {
+    if (freeWorkers === 0) {
+        // Skipping work because all workers are busy
+        return;
+    }
+
+    freeWorkers--;
+    var work = queue.pop();
+    if (!work) {
+        freeWorkers++;
+        return;
+    } else {
+        // Do something with the work
+        setImmediate(function () {
+            console.log('Processing work', work);
+            freeWorkers++;
+            processWork();
+        });
+    }
+}
+
+var queue = new FairQueue({onUnidle: processWork});
+queue.push('source1', 'item1', 1);
+queue.push('source1', 'item2', 1);
+queue.push('source2', 'item3', 1);
+```

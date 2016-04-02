@@ -10,14 +10,18 @@ function DRRQueue(options) {
         options = {};
     }
 
+    this.length = 0;
+
     // A queue of flows that have some data to process
     this.activeList = new Deque();
+    this.activeFlow = null;
+
     // A map of flows from id -> Flow
     this.flows = {};
 
     this.quantumSize = options.quantumSize || 1;
 
-    this.onUnidle = function () {};
+    this.onUnidle = options.onUnidle || function () {};
 };
 
 function lookupFlow(drrqueue, flowId) {
@@ -40,11 +44,13 @@ DRRQueue.prototype.push = function (flowId, data, size) {
     
     // If the flow is transitioning from 'no data' to 'some data'
     // then push the flow into the active list
-    if (count === 1) {
-        var activeCount = this.activeList.push(flow);
-        if (activeCount) {
-            this.onUnidle();
-        }
+    if (count === 1 && this.activeFlow !== flow) {
+        this.activeList.push(flow);
+    }
+
+    this.length++;
+    if (this.length === 1) {
+        this.onUnidle();
     }
 };
 
@@ -56,6 +62,7 @@ DRRQueue.prototype._processActiveFlow = function () {
         if (next.size <= activeFlow.deficit) {
             activeFlow.deficit -= next.size;
             queue.shift();
+            this.length--;
             return next.data;
         } else {
             this.activeList.push(activeFlow);
